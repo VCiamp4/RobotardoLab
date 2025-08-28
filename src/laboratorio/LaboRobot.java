@@ -4,6 +4,11 @@ import robocode.*;
 
 public class LaboRobot extends JuniorRobot
 {
+    private Strategy est;
+
+    public LaboRobot(Strategy st){
+        this.est = st;
+    }
 
 	@Override	
 	public void run() {
@@ -21,7 +26,7 @@ public class LaboRobot extends JuniorRobot
 	 */
 	@Override
 	public void onScannedRobot() {
-		fire(1);
+		est.botEscaneado();
 
 	}
 
@@ -30,14 +35,14 @@ public class LaboRobot extends JuniorRobot
 	 */
 	@Override
 	public void onHitByBullet() {
-		back(10);
+        est.reciboDaño();
 	}
 	
 	/**
 	 * onHitWall: What to do when you hit a wall
 	 */
 	@Override
-	public void onHitWall() {
-		back(20);
+	public void onHitWall(){
+        est.choco();
 	}	
 }
