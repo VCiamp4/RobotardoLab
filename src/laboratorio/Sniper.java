@@ -1,8 +1,10 @@
 package laboratorio;
 
+import robocode.AdvancedRobot;
+import robocode.TurnCompleteCondition;
 import robocode.util.Utils;
 
-public class Sniper implements Strategy {
+public class Sniper extends AdvancedRobot implements Strategy {
     @Override
     public void botEscaneado() {
             this.scannedAngle(fire);
@@ -10,17 +12,29 @@ public class Sniper implements Strategy {
 
     @Override
     public void choco() {
-
-    }
-
-    @Override
-    public void reciboDaño() {
         back(10);
     }
 
     @Override
-    public void bajaVida(){
+    public void reciboDano() {
+        turnAheadLeft(5,5);
+        this.bajaVida();
+    }
 
+    @Override
+    public void bajaVida(){
+        if (energia < 40){
+            while (others > 1){
+                this.setAhead((double)40000.0F);
+                this.movingForward = true;
+                this.setTurnRight((double)90.0F);
+                this.waitFor(new TurnCompleteCondition(this));
+                this.setTurnLeft((double)180.0F);
+                this.waitFor(new TurnCompleteCondition(this));
+                this.setTurnRight((double)180.0F);
+                this.waitFor(new TurnCompleteCondition(this));
+            }
+        }
     }
 
     @Override
