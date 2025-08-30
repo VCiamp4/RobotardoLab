@@ -1,48 +1,31 @@
 package laboratorio;
 import robocode.*;
 
-
-public class LaboRobot extends JuniorRobot
-{
+public class LaboRobot extends JuniorRobot {
     private Strategy est;
+
+    public LaboRobot() {
+        this.est = new Sniper();
+        this.est.init(this);
+    }
 
     public LaboRobot(Strategy st){
         this.est = st;
+        this.est.init(this);
     }
 
-	@Override	
-	public void run() {
+    @Override
+    public void run(){
+        setColors(orange, blue, white, yellow, black);
+        est.arranque();
+    }
 
-		setColors(orange, blue, white, yellow, black);
-		ahead(100);
-		turnGunRight(360);
-		back(100);
-		turnGunRight(360);
-		
-	}
+    @Override
+    public void onScannedRobot() { est.botEscaneado(); }
 
-	/**
-	 * onScannedRobot: What to do when you see another robot
-	 */
-	@Override
-	public void onScannedRobot() {
-		est.botEscaneado();
+    @Override
+    public void onHitByBullet() { est.reciboDano(); }
 
-	}
-
-	/**
-	 * onHitByBullet: What to do when you're hit by a bullet
-	 */
-	@Override
-	public void onHitByBullet() {
-        est.reciboDaño();
-	}
-	
-	/**
-	 * onHitWall: What to do when you hit a wall
-	 */
-	@Override
-	public void onHitWall(){
-        est.choco();
-	}	
+    @Override
+    public void onHitWall(){ est.choco(); }
 }

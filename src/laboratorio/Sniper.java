@@ -1,50 +1,67 @@
 package laboratorio;
 
-import robocode.AdvancedRobot;
-import robocode.TurnCompleteCondition;
-import robocode.util.Utils;
+import robocode.JuniorRobot;
 
-public class Sniper extends AdvancedRobot implements Strategy {
+public class Sniper implements Strategy {
+    private JuniorRobot r;
+    private int esquina = 0;
+
     @Override
-    public void botEscaneado() {
-            this.scannedAngle(fire);
+    public void init(JuniorRobot self) {
+        this.r = self;
     }
 
     @Override
-    public void choco() {
-        back(10);
-    }
-
-    @Override
-    public void reciboDano() {
-        turnAheadLeft(5,5);
-        this.bajaVida();
-    }
-
-    @Override
-    public void bajaVida(){
-        if (energia < 40){
-            while (others > 1){
-                this.setAhead((double)40000.0F);
-                this.movingForward = true;
-                this.setTurnRight((double)90.0F);
-                this.waitFor(new TurnCompleteCondition(this));
-                this.setTurnLeft((double)180.0F);
-                this.waitFor(new TurnCompleteCondition(this));
-                this.setTurnRight((double)180.0F);
-                this.waitFor(new TurnCompleteCondition(this));
-            }
+    public void arranque() {
+        moverAEsquina();
+        while (true) {
+            r.turnGunLeft(10);   // barrido simple con el cañón
+            r.turnGunRight(20);
+            r.turnGunLeft(10);
+            r.doNothing(1);      // pasa un turno
         }
     }
 
     @Override
-    public void arranque(){
-        this.stopWhenSeeRobot = false;
-        this.turnRight(Utils.normalRelativeAngleDegrees((double)corner - this.getHeading()));
-        this.stopWhenSeeRobot = true;
-        this.ahead((double)5000.0F);
-        this.turnLeft((double)90.0F);
-        this.ahead((double)5000.0F);
-        this.turnGunLeft((double)90.0F);
+    public void botEscaneado() {
+        int angEnemigo = r.heading + r.scannedBearing;
+        r.turnGunTo(angEnemigo);
+        if (r.gunReady) {
+            double potencia = (r.scannedDistance < 200) ? 3 : 1.5;
+            r.fire(potencia);
+        }
+        if (r.scannedDistance < 150) cambiarEsquina();
+    }
+
+    @Override
+    public void choco() {
+        r.back(50);
+        r.turnRight(90);
+    }
+
+    @Override
+    public void reciboDano() {
+        cambiarEsquina();
+    }
+
+    @Override
+    public void bajaVida() {
+        // no hago nada especial acá
+    }
+
+    private void moverAEsquina() {
+        int margen = 60;
+        int x = (esquina == 1 || esquina == 2) ? r.fieldWidth - margen : margen;
+        int y = (esquina >= 2) ? r.fieldHeight - margen : margen;
+        int dx = x - r.robotX;
+        int dy = y - r.robotY;
+        int ang = (int)Math.toDegrees(Math.atan2(dx, dy));
+        r.turnTo(ang);
+        r.ahead((int)Math.hypot(dx, dy));
+    }
+
+    private void cambiarEsquina() {
+        esquina = (esquina + 1) % 4;
+        moverAEsquina();
     }
 }

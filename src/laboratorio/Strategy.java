@@ -1,10 +1,12 @@
 package laboratorio;
 
-public interface Strategy {
-    public abstract void botEscaneado();
-    public abstract void choco();
-    public abstract void reciboDano();
-    public abstract void bajaVida();
-    public abstract void arranque();
+import robocode.JuniorRobot;
 
+public interface Strategy {
+    void init(JuniorRobot self);
+    void arranque();
+    void botEscaneado();
+    void choco();
+    void reciboDano();
+    void bajaVida();
 }
